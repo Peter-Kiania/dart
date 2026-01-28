@@ -54,27 +54,47 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var _counter = 0.0;
-  var myFontSize = 30.0;
+  // var _counter = 0.0;
+  // var myFontSize = 30.0;
+  late TextEditingController _controller;
+  late TextEditingController _password;
 
-
-  void _incrementCounter() {
-    setState(() {
-      if (_counter <99.0) {
-        _counter++;
-        myFontSize++;
-      }
-
-    });
-
+  @override
+  void initState(){
+    super.initState();
+    _controller = TextEditingController();
+    _password = TextEditingController();
   }
-  void setNewValue(double value)
-  {
-    setState(() {
-      _counter = value;
-      myFontSize= value;
-    });
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _password.dispose();
+    super.dispose();
   }
+
+  void buttonClicked(){
+
+
+    }
+  }
+
+  // void _incrementCounter() {
+  //   setState(() {
+  //     if (_counter <99.0) {
+  //       _counter++;
+  //       myFontSize++;
+  //     }
+  //   });
+  // }
+
+  // void setNewValue(double value)
+  // {
+  //   setState(() {
+  //     _counter = value;
+  //     myFontSize= value;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -113,22 +133,33 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: .center,
           children: [
-            Text('You have pushed the button this many times:', style: TextStyle(fontSize: myFontSize), ),
-            Text(
-              '$_counter',
-              style: TextStyle(fontSize: myFontSize),
-            ),
-            Slider(value: _counter, max: 100.0, onChanged: setNewValue,min: 0.0,),
+            // Text('You have pushed the button this many times:', style: TextStyle(fontSize: myFontSize), ),
+            // Text(
+            //   '$_counter',
+            //   style: TextStyle(fontSize: myFontSize),
+            // ),
+            // Slider(value: _counter, max: 100.0, onChanged: setNewValue,min: 0.0,),
+            TextField(controller: _controller,
+            decoration: InputDecoration(hintText: "Enter your Login name",
+            border: OutlineInputBorder(),
+            labelText: "Login"
+            ),),
+            TextField(controller: _password,
+            obscureText: true,
+            decoration: InputDecoration(hintText: "Enter your Password",
+            border: OutlineInputBorder(),
+            labelText: "Password",),),
+            ElevatedButton(onPressed: buttonClicked, child: Text("Login",))
           ],
         ),
       ),
 
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _incrementCounter,
+      //   tooltip: 'Increment',
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 }
