@@ -56,6 +56,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // var _counter = 0.0;
   // var myFontSize = 30.0;
+  var pic= Image.asset("images/question-mark.png", width: 300, height: 300,);
   late TextEditingController _controller;
   late TextEditingController _password;
 
@@ -74,8 +75,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void buttonClicked(){
-
-
+    var passtext = _password.value.text;
+    if (_password.value.text != "") {
+      if (passtext == "ASDF") {
+        setState(() {
+          pic = Image.asset("images/idea.png", width: 300, height: 300,);
+          Semantics( child: pic, label: "This is a lightbulb image",);
+        });
+      }
+      else {
+        setState(() {
+          pic = Image.asset("images/stop.png", width: 300, height: 300,);
+          Semantics( child: pic, label: "This is a stop sign image",);
+        });
+      }
+    }
+    else {
+      setState(() {
+        pic = Image.asset("images/question-mark.png", width: 300, height: 300,);
+        Semantics( child: pic, label: "This is a Question image",);
+      });
+    }
   }
 
   // void _incrementCounter() {
@@ -148,7 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: InputDecoration(hintText: "Enter your Password",
             border: OutlineInputBorder(),
             labelText: "Password",),),
-            ElevatedButton(onPressed: buttonClicked, child: Text("Login",))
+            ElevatedButton(onPressed: buttonClicked, child: Text("Login",)),
+            pic
           ],
         ),
       ),
