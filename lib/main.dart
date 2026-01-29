@@ -76,8 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void buttonClicked(){
     var passtext = _password.value.text;
-    if (_password.value.text != "") {
-      if (passtext == "ASDF") {
+    var logintext = _controller.value.text;
+    if (passtext != "" && (logintext != "")) {
+      if ((passtext == "ASDF") && (logintext == "George")) {
         setState(() {
           pic = Image.asset("images/idea.png", width: 300, height: 300,);
           Semantics( child: pic, label: "This is a lightbulb image",);
