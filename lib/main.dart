@@ -81,20 +81,20 @@ class _MyHomePageState extends State<MyHomePage> {
       if ((passtext == "ASDF") && (logintext == "George")) {
         setState(() {
           pic = Image.asset("images/idea.png", width: 300, height: 300,);
-          Semantics( child: pic, label: "This is a lightbulb image",);
+          Semantics( label: "This is a lightbulb image", child: pic,);
         });
       }
       else {
         setState(() {
           pic = Image.asset("images/stop.png", width: 300, height: 300,);
-          Semantics( child: pic, label: "This is a stop sign image",);
+          Semantics( label: "This is a stop sign image", child: pic,);
         });
       }
     }
     else {
       setState(() {
         pic = Image.asset("images/question-mark.png", width: 300, height: 300,);
-        Semantics( child: pic, label: "This is a Question image",);
+        Semantics( label: "This is a Question image", child: pic, );
       });
     }
   }
