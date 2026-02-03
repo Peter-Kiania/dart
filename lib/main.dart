@@ -29,7 +29,9 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+
       ),
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -77,66 +79,45 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column( children:[ Text('BROWSE CATEGORIES', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0),),
-                const Text("Not sure about exactly which recipe you're looking for? Do a search, or dive into or most popular categories. ", style: TextStyle(fontSize: 17),),]),
+            Column(children:[ Text('BROWSE CATEGORIES', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0),),
+              Text("Not sure about exactly which recipe you're looking for? Do a search, or dive into or most popular categories. ", style: TextStyle(fontSize: 24),),]),
             Column(
             children:[ Text('BY MEAT' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0)),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              CircleAvatar(backgroundImage: beef,radius: 80, child: const Text('BEEF', style: TextStyle(color: Colors.black, fontSize: 28),)),
-              CircleAvatar(backgroundImage: chicken,radius: 80, child: const Text('CHICKEN', style: TextStyle(color: Colors.black, fontSize: 28),),),
-              CircleAvatar(backgroundImage: pork,radius: 80, child: const Text('PORK', style: TextStyle(color: Colors.black, fontSize: 28),),),
-              CircleAvatar(backgroundImage: seafood,radius: 80, child: const Text('SEAFOOD', style: TextStyle(color: Colors.black, fontSize: 28),),)
+              CircleAvatar(backgroundImage: beef,radius: 100, child: const Text('BEEF', style: TextStyle(color: Colors.black, fontSize: 28),)),
+              CircleAvatar(backgroundImage: chicken,radius: 100, child: const Text('CHICKEN', style: TextStyle(color: Colors.black, fontSize: 28),),),
+              CircleAvatar(backgroundImage: pork,radius: 100, child: const Text('PORK', style: TextStyle(color: Colors.black, fontSize: 28),),),
+              CircleAvatar(backgroundImage: seafood,radius: 100, child: const Text('SEAFOOD', style: TextStyle(color: Colors.black, fontSize: 28),),)
             ])]),
             Column(
-              children: [ Text('BY COURSE' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0),
-            ),
-            Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CircleAvatar(backgroundImage: maindishes,radius: 80),
-                  CircleAvatar(backgroundImage: salad,radius: 80),
-                  CircleAvatar(backgroundImage: sidedishes,radius: 80),
-                  CircleAvatar(backgroundImage: crockpot,radius: 80)
-                ]),
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [Text('Main dishes', style: TextStyle(fontSize: 17)),
-                Text('Salad Recipes' , style: TextStyle(fontSize: 17)),
-                Text('Side dishes' , style: TextStyle(fontSize: 17)),
-                Text('Crockpot' , style: TextStyle(fontSize: 17))],)])]),
-            Column(
-                children: [ Text('BY DESSERT' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0),
-                ),
-                  Stack(
-                      alignment: Alignment.bottomCenter,
+                children:[ Text('BY COURSE' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0)),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CircleAvatar(backgroundImage: icecream,radius: 80),
-                              CircleAvatar(backgroundImage: brownies,radius: 80),
-                              CircleAvatar(backgroundImage: pies,radius: 80),
-                              CircleAvatar(backgroundImage: cookies,radius: 80)
-                            ])])]),
+                        CircleAvatar(backgroundImage: maindishes,radius: 100, child: const Text('MAINDISHES', style: TextStyle(color: Colors.white, fontSize: 24),)),
+                        CircleAvatar(backgroundImage: salad,radius: 100, child: const Text('SALAD RECIPES', style: TextStyle(color: Colors.white, fontSize: 20),),),
+                        CircleAvatar(backgroundImage: sidedishes,radius: 100, child: const Text('SIDE DISHES', style: TextStyle(color: Colors.white, fontSize: 20),),),
+                        CircleAvatar(backgroundImage: crockpot,radius: 100, child: const Text('CROCKPOT', style: TextStyle(color: Colors.white, fontSize: 20),),)
+                      ])]),
+            Column(
+                children:[ Text('BY DESSERT' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0)),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        CircleAvatar(backgroundImage: icecream,radius: 100, child: const Text('ICE CREAM', style: TextStyle(color: Colors.white, fontSize: 28),)),
+                        CircleAvatar(backgroundImage: brownies,radius: 100, child: const Text('BROWNIES', style: TextStyle(color: Colors.white, fontSize: 28),),),
+                        CircleAvatar(backgroundImage: pies,radius: 100, child: const Text('PIES', style: TextStyle(color: Colors.white, fontSize: 28),),),
+                        CircleAvatar(backgroundImage: cookies,radius: 100, child: const Text('COOKIES', style: TextStyle(color: Colors.white, fontSize: 28),),)
+                      ])]),
 
           ]
 
