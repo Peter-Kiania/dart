@@ -54,66 +54,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // var _counter = 0.0;
-  // var myFontSize = 30.0;
-  var pic= Image.asset("images/question-mark.png", width: 300, height: 300,);
-  late TextEditingController _controller;
-  late TextEditingController _password;
+  var beef = AssetImage("images/beef.jpg");
+  var chicken = AssetImage("images/Chicken.jpg");
+  var pork = AssetImage("images/Pork.jpg");
+  var seafood = AssetImage("images/seafood.jpg");
+  var maindishes = AssetImage("images/Maindishes.jpg");
+  var salad = AssetImage("images/salad.jpg");
+  var sidedishes = AssetImage("images/sidedishes.jpg");
+  var crockpot = AssetImage("images/crockpot.jpg");
+  var icecream = AssetImage("images/icecream.jpg");
+  var brownies = AssetImage("images/brownies.jpg");
+  var cookies = AssetImage("images/cookies.jpg");
+  var pies = AssetImage("images/pies.jpg");
 
-  @override
-  void initState(){
-    super.initState();
-    _controller = TextEditingController();
-    _password = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
-  void buttonClicked(){
-    var passtext = _password.value.text;
-    if (_password.value.text != "") {
-      if (passtext == "ASDF") {
-        setState(() {
-          pic = Image.asset("images/idea.png", width: 300, height: 300,);
-          Semantics( child: pic, label: "This is a lightbulb image",);
-        });
-      }
-      else {
-        setState(() {
-          pic = Image.asset("images/stop.png", width: 300, height: 300,);
-          Semantics( child: pic, label: "This is a stop sign image",);
-        });
-      }
-    }
-    else {
-      setState(() {
-        pic = Image.asset("images/question-mark.png", width: 300, height: 300,);
-        Semantics( child: pic, label: "This is a Question image",);
-      });
-    }
-  }
-
-  // void _incrementCounter() {
-  //   setState(() {
-  //     if (_counter <99.0) {
-  //       _counter++;
-  //       myFontSize++;
-  //     }
-  //   });
-  // }
-
-  // void setNewValue(double value)
-  // {
-  //   setState(() {
-  //     _counter = value;
-  //     myFontSize= value;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -137,49 +90,62 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // Text('You have pushed the button this many times:', style: TextStyle(fontSize: myFontSize), ),
-            // Text(
-            //   '$_counter',
-            //   style: TextStyle(fontSize: myFontSize),
-            // ),
-            // Slider(value: _counter, max: 100.0, onChanged: setNewValue,min: 0.0,),
-            TextField(controller: _controller,
-            decoration: InputDecoration(hintText: "Enter your Login name",
-            border: OutlineInputBorder(),
-            labelText: "Login"
-            ),),
-            TextField(controller: _password,
-            obscureText: true,
-            decoration: InputDecoration(hintText: "Enter your Password",
-            border: OutlineInputBorder(),
-            labelText: "Password",),),
-            ElevatedButton(onPressed: buttonClicked, child: Text("Login",)),
-            pic
-          ],
+            Column( children:[ Text('BROWSE CATEGORIES', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0),),
+                const Text("Not sure about exactly which recipe you're looking for? Do a search, or dive into or most popular categories. ", style: TextStyle(fontSize: 17),),]),
+            Column(
+            children:[ Text('BY MEAT' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0)),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              CircleAvatar(backgroundImage: beef,radius: 80, child: const Text('BEEF', style: TextStyle(color: Colors.black, fontSize: 28),)),
+              CircleAvatar(backgroundImage: chicken,radius: 80, child: const Text('CHICKEN', style: TextStyle(color: Colors.black, fontSize: 28),),),
+              CircleAvatar(backgroundImage: pork,radius: 80, child: const Text('PORK', style: TextStyle(color: Colors.black, fontSize: 28),),),
+              CircleAvatar(backgroundImage: seafood,radius: 80, child: const Text('SEAFOOD', style: TextStyle(color: Colors.black, fontSize: 28),),)
+            ])]),
+            Column(
+              children: [ Text('BY COURSE' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0),
+            ),
+            Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CircleAvatar(backgroundImage: maindishes,radius: 80),
+                  CircleAvatar(backgroundImage: salad,radius: 80),
+                  CircleAvatar(backgroundImage: sidedishes,radius: 80),
+                  CircleAvatar(backgroundImage: crockpot,radius: 80)
+                ]),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [Text('Main dishes', style: TextStyle(fontSize: 17)),
+                Text('Salad Recipes' , style: TextStyle(fontSize: 17)),
+                Text('Side dishes' , style: TextStyle(fontSize: 17)),
+                Text('Crockpot' , style: TextStyle(fontSize: 17))],)])]),
+            Column(
+                children: [ Text('BY DESSERT' , style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4.0),
+                ),
+                  Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              CircleAvatar(backgroundImage: icecream,radius: 80),
+                              CircleAvatar(backgroundImage: brownies,radius: 80),
+                              CircleAvatar(backgroundImage: pies,radius: 80),
+                              CircleAvatar(backgroundImage: cookies,radius: 80)
+                            ])])]),
+
+          ]
+
+
+
+
         ),
       ),
 
-
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
 }
