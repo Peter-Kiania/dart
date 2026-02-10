@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 void main() {
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -56,16 +57,31 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // var _counter = 0.0;
   // var myFontSize = 30.0;
-  var pic= Image.asset("images/question-mark.png", width: 300, height: 300,);
   late TextEditingController _controller;
   late TextEditingController _password;
+  EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _controller = TextEditingController();
     _password = TextEditingController();
+    loadData();
   }
+   void loadData() async {
+    var loginName = await prefs.getString("LoginName");
+    var passname = await prefs.getString("Password");
+    if (loginName.isNotEmpty && passname.isNotEmpty) {
+      setState(() {
+      _controller.text = loginName;
+      _password.text = passname;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('The Previous Login and Password have been loaded!')),
+      );
+      }
+    }
+
 
   @override
   void dispose() {
@@ -74,113 +90,111 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void buttonClicked(){
-    var passtext = _password.value.text;
-    var logintext = _controller.value.text;
-    if (passtext != "" && (logintext != "")) {
-      if ((passtext == "ASDF") && (logintext == "George")) {
-        setState(() {
-          pic = Image.asset("images/idea.png", width: 300, height: 300,);
-          Semantics( label: "This is a lightbulb image", child: pic,);
-        });
+  void buttonClicked() async{
+
+    showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      title: const Text('Save Details?'),
+      content: const Text('Do you want to save your username and password?'),
+      actions: [ ElevatedButton(onPressed: onClicked, child: Text('Yes')),
+            ElevatedButton(onPressed: onnotClicked, child: Text('No'))],
+        ));
       }
-      else {
-        setState(() {
-          pic = Image.asset("images/stop.png", width: 300, height: 300,);
-          Semantics( label: "This is a stop sign image", child: pic,);
-        });
-      }
-    }
-    else {
-      setState(() {
-        pic = Image.asset("images/question-mark.png", width: 300, height: 300,);
-        Semantics( label: "This is a Question image", child: pic, );
-      });
-    }
+
+  void onClicked(){
+    prefs.setString("LoginName", _controller.text);
+    prefs.setString("Password", _password.text).then((bool success){
+      Navigator.pop(context);
+    });
   }
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     if (_counter <99.0) {
-  //       _counter++;
-  //       myFontSize++;
-  //     }
-  //   });
-  // }
+    void onnotClicked(){
+      Navigator.pop(context);
+      prefs.remove("LoginName");
+      prefs.remove("Password");
+    }
 
-  // void setNewValue(double value)
-  // {
-  //   setState(() {
-  //     _counter = value;
-  //     myFontSize= value;
-  //   });
-  // }
+    // void _incrementCounter() {
+    //   setState(() {
+    //     if (_counter <99.0) {
+    //       _counter++;
+    //       myFontSize++;
+    //     }
+    //   });
+    // }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            // Text('You have pushed the button this many times:', style: TextStyle(fontSize: myFontSize), ),
-            // Text(
-            //   '$_counter',
-            //   style: TextStyle(fontSize: myFontSize),
-            // ),
-            // Slider(value: _counter, max: 100.0, onChanged: setNewValue,min: 0.0,),
-            TextField(controller: _controller,
-            decoration: InputDecoration(hintText: "Enter your Login name",
-            border: OutlineInputBorder(),
-            labelText: "Login"
-            ),),
-            TextField(controller: _password,
-            obscureText: true,
-            decoration: InputDecoration(hintText: "Enter your Password",
-            border: OutlineInputBorder(),
-            labelText: "Password",),),
-            ElevatedButton(onPressed: buttonClicked, child: Text("Login",)),
-            pic
-          ],
+    // void setNewValue(double value)
+    // {
+    //   setState(() {
+    //     _counter = value;
+    //     myFontSize= value;
+    //   });
+    // }
+
+    @override
+    Widget build(BuildContext context) {
+      // This method is rerun every time setState is called, for instance as done
+      // by the _incrementCounter method above.
+      //
+      // The Flutter framework has been optimized to make rerunning build methods
+      // fast, so that you can just rebuild anything that needs updating rather
+      // than having to individually change instances of widgets.
+      return Scaffold(
+        appBar: AppBar(
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
         ),
-      ),
+        body: Center(
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: Column(
+            // Column is also a layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            //
+            // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
+            // action in the IDE, or press "p" in the console), to see the
+            // wireframe for each widget.
+            mainAxisAlignment: .center,
+            children: [
+              // Text('You have pushed the button this many times:', style: TextStyle(fontSize: myFontSize), ),
+              // Text(
+              //   '$_counter',
+              //   style: TextStyle(fontSize: myFontSize),
+              // ),
+              // Slider(value: _counter, max: 100.0, onChanged: setNewValue,min: 0.0,),
+              TextField(controller: _controller,
+                decoration: InputDecoration(hintText: "Enter your Login name",
+                    border: OutlineInputBorder(),
+                    labelText: "Login"
+                ),),
+              TextField(controller: _password,
+                obscureText: true,
+                decoration: InputDecoration(hintText: "Enter your Password",
+                  border: OutlineInputBorder(),
+                  labelText: "Password",),),
+              ElevatedButton(onPressed: buttonClicked, child: Text("Login",)),
+            ],
+          ),
+        ),
 
 
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
-    );
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: _incrementCounter,
+        //   tooltip: 'Increment',
+        //   child: const Icon(Icons.add),
+        // ),
+      );
+    }
   }
-}
+
