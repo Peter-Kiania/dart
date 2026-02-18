@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
-import 'package:my_cst2335_labs/SecondPage.dart';
+import 'package:my_cst2335_labs/second_page.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/SecondPage': (context)=> SecondPage()
+        '/SecondPage': (context)=> TheSecondPage()
       },
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -58,34 +58,45 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
+class DataRepository{
+  static late String loginName;
+  static EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
+  static Future<void> loadData(TextEditingController fn, TextEditingController ln,
+      TextEditingController ph, TextEditingController em) async {
+    fn.text = await prefs.getString('fname');
+    ln.text = await prefs.getString('lname');
+    ph.text = await prefs.getString('phone');
+    em.text = await prefs.getString('email');
+  }
+  static void saveData(String key, String value) {
+    prefs.setString(key, value);
+  }
+
+}
 
 class _MyHomePageState extends State<MyHomePage> {
   // var _counter = 0.0;
   // var myFontSize = 30.0;
   late TextEditingController _controller;
   late TextEditingController _password;
-  EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
     _password = TextEditingController();
-    // loadData();
+    loadData();
   }
-   // void loadData() async {
-   //  var loginName = await prefs.getString("LoginName");
-   //  var passname = await prefs.getString("Password");
-   //  if (loginName.isNotEmpty && passname.isNotEmpty) {
-   //    setState(() {
-   //    _controller.text = loginName;
-   //    _password.text = passname;
-   //    });
-   //    ScaffoldMessenger.of(context).showSnackBar(
-   //    SnackBar(content: Text('The Previous Login and Password have been loaded!')),
-   //    );
-   //    }
-   //  }
+   void loadData() async {
+     var loginName = await DataRepository.prefs.getString("LoginName");
+     var passname = await DataRepository.prefs.getString("Password");
+     if (loginName.isNotEmpty && passname.isNotEmpty) {
+       setState(() {
+         _controller.text = loginName;
+         _password.text = passname;
+       });
+     }
+   }
 
 
   @override
@@ -96,29 +107,43 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void buttonClicked() async{
-    var loginName = await prefs.getString("LoginName");
-    var passname = await prefs.getString("Password");
+    var loginName = await DataRepository.prefs.getString("LoginName");
+    var passname = await DataRepository.prefs.getString("Password");
     if (loginName == _controller.text && passname == _password.text){
+      DataRepository.loginName= loginName;
       Navigator.pushNamed(context, '/SecondPage');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Welcome Back $loginName',)),
       );
     }
+    else {
+      showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+        title: const Text('Save Details?'),
+        content: const Text('Do you want to save your username and password?'),
+        actions: [ ElevatedButton(onPressed: onClicked, child: Text('Yes')),
+          ElevatedButton(onPressed: onnotClicked, child: Text('No'))],
+      ));
+    }
+    }
 
-      }
 
-  // void onClicked(){
-  //   prefs.setString("LoginName", _controller.text);
-  //   prefs.setString("Password", _password.text).then((bool success){
-  //     Navigator.pop(context);
-  //   });
-  // }
-  //
-  //   void onnotClicked(){
-  //     Navigator.pop(context);
-  //     prefs.remove("LoginName");
-  //     prefs.remove("Password");
-  //   }
+
+  void onClicked(){
+    DataRepository.prefs.setString("LoginName", _controller.text);
+    DataRepository.prefs.setString("Password", _password.text).then((bool success){
+      Navigator.pop(context);
+
+    });
+  }
+
+
+    void onnotClicked(){
+      Navigator.pop(context);
+      DataRepository.prefs.remove("LoginName");
+      DataRepository.prefs.remove("Password");
+    }
+
+
 
     // void _incrementCounter() {
     //   setState(() {
@@ -204,4 +229,3 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
   }
-
