@@ -112,9 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (loginName == _controller.text && passname == _password.text){
       DataRepository.loginName= loginName;
       Navigator.pushNamed(context, '/SecondPage');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Welcome Back $loginName',)),
-      );
+
     }
     else {
       showDialog(context: context, builder: (BuildContext context) => AlertDialog(

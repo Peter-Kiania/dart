@@ -67,6 +67,14 @@ class SecondPageState extends State<SecondPage> {
     _lastname.addListener(() => DataRepository.saveData('lname', _lastname.text));
     _phonenumber.addListener(() => DataRepository.saveData('phone', _phonenumber.text));
     _emailaddress.addListener(() => DataRepository.saveData('email', _emailaddress.text));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Welcome Back ${DataRepository.loginName}"),
+        ),
+      );
+    });
   }
 
   @override
