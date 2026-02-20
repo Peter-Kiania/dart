@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:my_cst2335_labs/second_page.dart';
+import 'package:my_cst2335_labs/data_repository.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -58,21 +58,6 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-class DataRepository{
-  static late String loginName;
-  static EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-  static Future<void> loadData(TextEditingController fn, TextEditingController ln,
-      TextEditingController ph, TextEditingController em) async {
-    fn.text = await prefs.getString('fname');
-    ln.text = await prefs.getString('lname');
-    ph.text = await prefs.getString('phone');
-    em.text = await prefs.getString('email');
-  }
-  static void saveData(String key, String value) {
-    prefs.setString(key, value);
-  }
-
-}
 
 class _MyHomePageState extends State<MyHomePage> {
   // var _counter = 0.0;
@@ -90,11 +75,15 @@ class _MyHomePageState extends State<MyHomePage> {
    void loadData() async {
      var loginName = await DataRepository.prefs.getString("LoginName");
      var passname = await DataRepository.prefs.getString("Password");
-     if (loginName.isNotEmpty && passname.isNotEmpty) {
-       setState(() {
-         _controller.text = loginName;
-         _password.text = passname;
-       });
+     if (_controller.text.isEmpty && _password.text.isEmpty) {
+       if (loginName.isNotEmpty && passname.isNotEmpty) {
+         setState(() {
+           _controller.text = loginName;
+           _password.text = passname;
+
+           DataRepository.loginName= loginName;
+         });
+       }
      }
    }
 
@@ -109,10 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void buttonClicked() async{
     var loginName = await DataRepository.prefs.getString("LoginName");
     var passname = await DataRepository.prefs.getString("Password");
-    if (loginName == _controller.text && passname == _password.text){
+
+    if (loginName==_controller.text && passname == _password.text){
       DataRepository.loginName= loginName;
       Navigator.pushNamed(context, '/SecondPage');
-
     }
     else {
       showDialog(context: context, builder: (BuildContext context) => AlertDialog(
@@ -127,9 +116,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   void onClicked(){
+    DataRepository.loginName= _password.text;
     DataRepository.prefs.setString("LoginName", _controller.text);
     DataRepository.prefs.setString("Password", _password.text).then((bool success){
       Navigator.pop(context);
+      Navigator.pushNamed(context, '/SecondPage');
 
     });
   }

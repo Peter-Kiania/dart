@@ -1,35 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:my_cst2335_labs/main.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:my_cst2335_labs/data_repository.dart';
 
 class TheSecondPage extends StatelessWidget {
   const TheSecondPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const SecondPage(title: 'Profile Page'),
-    );
+    return  const SecondPage(title: 'Profile Page');
   }
 }
 
@@ -61,21 +39,25 @@ class SecondPageState extends State<SecondPage> {
     _phonenumber = TextEditingController();
     _emailaddress = TextEditingController();
 
-    DataRepository.loadData(_firstname, _lastname, _phonenumber, _emailaddress);
+    initAsync();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Welcome Back ${DataRepository.loginName}")),
+      );
+    });
+  }
+
+
+  void initAsync() async {
+    await DataRepository.loadData(_firstname, _lastname, _phonenumber, _emailaddress);
 
     _firstname.addListener(() => DataRepository.saveData('fname', _firstname.text));
     _lastname.addListener(() => DataRepository.saveData('lname', _lastname.text));
     _phonenumber.addListener(() => DataRepository.saveData('phone', _phonenumber.text));
     _emailaddress.addListener(() => DataRepository.saveData('email', _emailaddress.text));
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Welcome Back ${DataRepository.loginName}"),
-        ),
-      );
-    });
   }
+
 
   @override
   void dispose() {
@@ -185,7 +167,7 @@ class SecondPageState extends State<SecondPage> {
             //   style: TextStyle(fontSize: myFontSize),
             // ),
             // Slider(value: _counter, max: 100.0, onChanged: setNewValue,min: 0.0,),
-            Text("Welcome back: "+ DataRepository.loginName, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
+            Text("Welcome back: ${DataRepository.loginName}", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
             TextField(controller: _firstname,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
