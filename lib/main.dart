@@ -116,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   void onClicked(){
-    DataRepository.loginName= _password.text;
+    DataRepository.loginName= _controller.text;
     DataRepository.prefs.setString("LoginName", _controller.text);
     DataRepository.prefs.setString("Password", _password.text).then((bool success){
       Navigator.pop(context);
