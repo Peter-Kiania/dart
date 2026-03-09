@@ -54,13 +54,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> words =  [] ;
+  List<String> words = [];
+
   List<int> quantity = [];
   late TextEditingController _controller;
   late TextEditingController _quantity;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _controller = TextEditingController();
     _quantity = TextEditingController();
@@ -79,7 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -90,66 +94,76 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
 
-
     );
   }
-  Widget listPage(){
+
+  Widget listPage() {
     return Column(
-        children:[
-          Row( children:[
-            Expanded(child: TextField(controller: _controller,
-              decoration: InputDecoration(labelText: 'Type the item here',
-                  border: OutlineInputBorder() ),)
-             ),
-            Expanded(child: TextField(controller: _quantity,
-              decoration: InputDecoration(labelText: 'Type the quantity here',
-              border: OutlineInputBorder()), )
-             ),
-            ElevatedButton( child:Text("Click here"), onPressed:() {
-              setState(() {
-                words.add( _controller.value.text );
-                _controller.text = "";
-                quantity.add(int.parse(_quantity.text));
-                _quantity.text = "";
+      children: [
+        Row(children: [
+          Expanded(child: TextField(controller: _controller,
+            decoration: InputDecoration(labelText: 'Type the item here',
+                border: OutlineInputBorder()),)
+          ),
+          Expanded(child: TextField(controller: _quantity,
+            decoration: InputDecoration(labelText: 'Type the quantity here',
+                border: OutlineInputBorder()),)
+          ),
+          ElevatedButton(child: Text("Click here"), onPressed: () {
+            setState(() {
+              words.add(_controller.value.text);
+              _controller.text = "";
+              quantity.add(int.parse(_quantity.text));
+              _quantity.text = "";
+            });
+          },)
+        ]),
+        Expanded(child: Builder(builder: (context) {
+          if (words.isEmpty) {
+            return const Text("There are no items in the list");
+          }
+          else {
+            return ListView.builder(itemCount: words.length,
+                itemBuilder: (context, rowNum) {
+                  return
+                    GestureDetector(
+                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${rowNum + 1}."), Text(words[rowNum]),
+                              Text(" quantity:  ${quantity[rowNum]}")
+                            ]), onLongPress: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                                title: const Text(
+                                    "Do you want to Delete the Item?"),
+                                actions: [
+                                  TextButton(onPressed: () =>
+                                      Navigator
+                                          .of(context)
+                                          .pop(),
+                                      child: const Text("No")),
+                                  TextButton(onPressed: () {
+                                    setState(() {
+                                      words.removeAt(rowNum);
+                                      quantity.removeAt(rowNum);
+                                    });
+                                    Navigator.of(context).pop();
+                                  }, child: const Text("Yes"))
+                                ]
+                            );
+                          }
 
-              });
-            }, )]),
-          Expanded(child:
-          ListView.builder( itemCount:words.length,
-              itemBuilder: (context, rowNum) {
-                return
-                  GestureDetector(
-                      child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("${rowNum + 1}."), Text(words[rowNum]),
-                            Text(" quantity: ${quantity[rowNum]}")
-                          ]), onLongPress: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context){
-                          return AlertDialog(
-                              title: const Text("Do you want to Delete the Item?"),
-                              actions: [
-                                TextButton(onPressed: () =>
-                                    Navigator
-                                        .of(context)
-                                        .pop(),
-                                    child: const Text("No")),
-                                TextButton(onPressed: () {
-                                  setState(() {
-                                    words.removeAt(rowNum);
-                                    quantity.removeAt(rowNum);
-                                  });
-                                  Navigator.of(context).pop();
-                                }, child: const Text("Yes"))
-                              ]
-                          );
-
-                            }
-
-                        );}
-                  );
-              })
-              )]);
+                      );
+                    }
+                    );
+                }
+            );
+          }
+        }),
+        ),
+      ],
+    );
   }
 }
