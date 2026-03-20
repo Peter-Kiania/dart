@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Shopping List'),
     );
   }
 }
@@ -54,67 +54,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // var _counter = 0.0;
-  // var myFontSize = 30.0;
-  var pic= Image.asset("images/question-mark.png", width: 300, height: 300,);
+  List<String> words = [];
+
+  List<int> quantity = [];
   late TextEditingController _controller;
-  late TextEditingController _password;
+  late TextEditingController _quantity;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _controller = TextEditingController();
-    _password = TextEditingController();
+    _quantity = TextEditingController();
   }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
-  void buttonClicked(){
-    var passtext = _password.value.text;
-    var logintext = _controller.value.text;
-    if (passtext != "" && (logintext != "")) {
-      if ((passtext == "ASDF") && (logintext == "George")) {
-        setState(() {
-          pic = Image.asset("images/idea.png", width: 300, height: 300,);
-          Semantics( label: "This is a lightbulb image", child: pic,);
-        });
-      }
-      else {
-        setState(() {
-          pic = Image.asset("images/stop.png", width: 300, height: 300,);
-          Semantics( label: "This is a stop sign image", child: pic,);
-        });
-      }
-    }
-    else {
-      setState(() {
-        pic = Image.asset("images/question-mark.png", width: 300, height: 300,);
-        Semantics( label: "This is a Question image", child: pic, );
-      });
-    }
-  }
-
-  // void _incrementCounter() {
-  //   setState(() {
-  //     if (_counter <99.0) {
-  //       _counter++;
-  //       myFontSize++;
-  //     }
-  //   });
-  // }
-
-  // void setNewValue(double value)
-  // {
-  //   setState(() {
-  //     _counter = value;
-  //     myFontSize= value;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -129,58 +80,90 @@ class _MyHomePageState extends State<MyHomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
+      body: listPage(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            // Text('You have pushed the button this many times:', style: TextStyle(fontSize: myFontSize), ),
-            // Text(
-            //   '$_counter',
-            //   style: TextStyle(fontSize: myFontSize),
-            // ),
-            // Slider(value: _counter, max: 100.0, onChanged: setNewValue,min: 0.0,),
-            TextField(controller: _controller,
-            decoration: InputDecoration(hintText: "Enter your Login name",
-            border: OutlineInputBorder(),
-            labelText: "Login"
-            ),),
-            TextField(controller: _password,
-            obscureText: true,
-            decoration: InputDecoration(hintText: "Enter your Password",
-            border: OutlineInputBorder(),
-            labelText: "Password",),),
-            ElevatedButton(onPressed: buttonClicked, child: Text("Login",)),
-            pic
-          ],
-        ),
       ),
 
 
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
+    );
+  }
+
+  Widget listPage() {
+    return Column(
+      children: [
+        Row(children: [
+          Expanded(child: TextField(controller: _controller,
+            decoration: InputDecoration(labelText: 'Type the item here',
+                border: OutlineInputBorder()),)
+          ),
+          Expanded(child: TextField(controller: _quantity,
+            decoration: InputDecoration(labelText: 'Type the quantity here',
+                border: OutlineInputBorder()),)
+          ),
+          ElevatedButton(child: Text("Click here"), onPressed: () {
+            setState(() {
+              words.add(_controller.value.text);
+              _controller.text = "";
+              quantity.add(int.parse(_quantity.text));
+              _quantity.text = "";
+            });
+          },)
+        ]),
+        Expanded(child: Builder(builder: (context) {
+          if (words.isEmpty) {
+            return const Text("There are no items in the list");
+          }
+          else {
+            return ListView.builder(itemCount: words.length,
+                itemBuilder: (context, rowNum) {
+                  return
+                    GestureDetector(
+                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${rowNum + 1}."), Text(words[rowNum]),
+                              Text(" quantity:  ${quantity[rowNum]}")
+                            ]), onLongPress: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                                title: const Text(
+                                    "Do you want to Delete the Item?"),
+                                actions: [
+                                  TextButton(onPressed: () =>
+                                      Navigator
+                                          .of(context)
+                                          .pop(),
+                                      child: const Text("No")),
+                                  TextButton(onPressed: () {
+                                    setState(() {
+                                      words.removeAt(rowNum);
+                                      quantity.removeAt(rowNum);
+                                    });
+                                    Navigator.of(context).pop();
+                                  }, child: const Text("Yes"))
+                                ]
+                            );
+                          }
+
+                      );
+                    }
+                    );
+                }
+            );
+          }
+        }),
+        ),
+      ],
     );
   }
 }
