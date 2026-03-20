@@ -1,4 +1,8 @@
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
+import 'package:my_cst2335_labs/Database.dart';
+import 'package:my_cst2335_labs/Dao/ShoppingListDao.dart';
+import 'package:my_cst2335_labs/Item.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +32,7 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const MyHomePage(title: 'Shopping List'),
     );
@@ -54,17 +58,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> words = [];
-
-  List<int> quantity = [];
-  late TextEditingController _controller;
-  late TextEditingController _quantity;
+  List<Item> item = [];
+  TextEditingController _controller = TextEditingController();
+  TextEditingController _quantity = TextEditingController();
+  late var dao;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
-    _quantity = TextEditingController();
+    loadData();
+  }
+
+  void loadData() async{
+    AppDatabase database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+    dao = database.shoppinglistDao;
+    final list = await dao.findAllItems();
+
+    setState((){
+      item = list;
+    });
   }
 
   @override
@@ -109,28 +121,31 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: InputDecoration(labelText: 'Type the quantity here',
                 border: OutlineInputBorder()),)
           ),
-          ElevatedButton(child: Text("Click here"), onPressed: () {
-            setState(() {
-              words.add(_controller.value.text);
-              _controller.text = "";
-              quantity.add(int.parse(_quantity.text));
-              _quantity.text = "";
-            });
-          },)
+          ElevatedButton(child: Text("Click here"), onPressed: ()async {
+            if (_controller.text.isNotEmpty && _quantity.text.isNotEmpty){
+    final newItem = Item(
+    Item.ID++, _controller.text, int.parse(_quantity.value.text)
+    );
+    await dao.insertItem(newItem);
+
+    setState(() {
+    item.add(newItem);
+    });
+    }})
         ]),
         Expanded(child: Builder(builder: (context) {
-          if (words.isEmpty) {
+          if (item.isEmpty) {
             return const Text("There are no items in the list");
           }
           else {
-            return ListView.builder(itemCount: words.length,
+            return ListView.builder(itemCount: item.length,
                 itemBuilder: (context, rowNum) {
                   return
                     GestureDetector(
                         child: Row(mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("${rowNum + 1}."), Text(words[rowNum]),
-                              Text(" quantity:  ${quantity[rowNum]}")
+                              Text("${rowNum + 1}."), Text(item[rowNum].name),
+                              Text(" quantity:  ${item[rowNum].count}")
                             ]), onLongPress: () {
                       showDialog(
                           context: context,
@@ -144,10 +159,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                           .of(context)
                                           .pop(),
                                       child: const Text("No")),
-                                  TextButton(onPressed: () {
+                                  TextButton(onPressed: () async {
+                                    final items = item[rowNum];
+                                    dao.deleteItem(items);
                                     setState(() {
-                                      words.removeAt(rowNum);
-                                      quantity.removeAt(rowNum);
+                                      item.removeAt(rowNum);
                                     });
                                     Navigator.of(context).pop();
                                   }, child: const Text("Yes"))
