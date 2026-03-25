@@ -146,7 +146,7 @@ class _$ShoppingListDao extends ShoppingListDao {
 
   @override
   Future<List<Item>> findAllItems() async {
-    return _queryAdapter.queryList('SELECT * FROM Ítem',
+    return _queryAdapter.queryList('SELECT * FROM Item',
         mapper: (Map<String, Object?> row) =>
             Item(row['id'] as int, row['name'] as String, row['count'] as int));
   }
