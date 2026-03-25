@@ -3,7 +3,7 @@ import 'package:my_cst2335_labs/Item.dart';
 @dao
 abstract class ShoppingListDao {
 
-  @Query('SELECT * FROM Ítem')
+  @Query('SELECT * FROM Item')
   Future<List<Item>> findAllItems();
 
 
