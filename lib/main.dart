@@ -145,11 +145,14 @@ class _MyHomePageState extends State<MyHomePage> {
       return Center(child:Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-        Text("Name: ${selectedItem!.name}", style: TextStyle(fontSize: 40.0),),
-        Text("Quantity: ${selectedItem!.count}", style: TextStyle(fontSize: 40.0)),
-        Spacer(),//balloon that expands to fill the space
-        ElevatedButton(onPressed: (){
-          setState(() { selectedItem = null; });
+        Text("Name: ${selectedItem!.name}", style: TextStyle(fontSize: 20.0),),
+        Text("Quantity: ${selectedItem!.count}", style: TextStyle(fontSize: 20.0)),
+          Text("DatabaseID: ${selectedItem!.id}", style: TextStyle(fontSize: 20.0)),
+        ElevatedButton(onPressed: () async{
+          dao.deleteItem(selectedItem!);
+          setState(() {
+            item.remove(selectedItem);
+            selectedItem = null; });
           }, child: Text("Delete")),
 
         ElevatedButton(onPressed: (){
@@ -160,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
     else{
-      return Text("Please select an item from the list",style: TextStyle(fontSize: 30.0));
+      return Text("Please select an item from the list",style: TextStyle(fontSize: 20.0));
     }
   }
 
