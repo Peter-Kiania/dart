@@ -205,7 +205,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Text("${rowNum + 1}."), Text(item[rowNum].name),
                         Text(" quantity:  ${item[rowNum].count}")
-                      ]), onLongPress: () {
+                      ]),
+                  onTap: (){
+                    setState(() {  selectedItem = item[rowNum]; });
+                    },
+                  onLongPress: () {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
