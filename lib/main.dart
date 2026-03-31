@@ -1,7 +1,5 @@
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:my_cst2335_labs/Database.dart';
-import 'package:my_cst2335_labs/Dao/ShoppingListDao.dart';
 import 'package:my_cst2335_labs/Item.dart';
 
 void main() {
@@ -59,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Item> item = [];
+  Item? selectedItem = null;
   TextEditingController _controller = TextEditingController();
   TextEditingController _quantity = TextEditingController();
   late var dao;
@@ -77,6 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
     setState((){
       item = list;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+    _quantity.dispose();
   }
 
   @override
@@ -100,39 +106,91 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: listPage(
+      body: reactiveLayout(),
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-      ),
-
 
     );
   }
+  Widget reactiveLayout(){
+    var size = MediaQuery.of(context).size;
+    var height = size.height;
+    var width = size.width;
+
+    if( (width>height) && (width > 720)) {
+
+      return Row( children:[
+        Expanded(flex:2,child: listPage(),    ),
+        Expanded(flex:3, child: detailsPage(), )
+      ]);
+    }
+
+    else{
+      if( selectedItem== null) {
+        return listPage();
+      }
+      else{
+        return detailsPage();
+      }
+
+    }
+  }
+
+  Widget detailsPage() {
+    if(selectedItem != null){
+      return Center(child:Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+        Text("Name: ${selectedItem!.name}", style: TextStyle(fontSize: 20.0),),
+        Text("Quantity: ${selectedItem!.count}", style: TextStyle(fontSize: 20.0)),
+          Text("DatabaseID: ${selectedItem!.id}", style: TextStyle(fontSize: 20.0)),
+        ElevatedButton(onPressed: () async{
+          dao.deleteItem(selectedItem!);
+          setState(() {
+            item.remove(selectedItem);
+            selectedItem = null; });
+          }, child: Text("Delete")),
+
+        ElevatedButton(onPressed: (){
+          setState(() { selectedItem = null; });
+          }, child: Text("Close"))
+
+      ],)
+      );
+    }
+    else{
+      return Text("Please select an item from the list",style: TextStyle(fontSize: 20.0));
+    }
+  }
+
 
   Widget listPage() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Row(children: [
-          Expanded(child: TextField(controller: _controller,
-            decoration: InputDecoration(labelText: 'Type the item here',
-                border: OutlineInputBorder()),)
-          ),
-          Expanded(child: TextField(controller: _quantity,
-            decoration: InputDecoration(labelText: 'Type the quantity here',
-                border: OutlineInputBorder()),)
-          ),
-          ElevatedButton(child: Text("Click here"), onPressed: ()async {
-            if (_controller.text.isNotEmpty && _quantity.text.isNotEmpty){
-    final newItem = Item(
-    Item.ID++, _controller.text, int.parse(_quantity.value.text)
-    );
-    await dao.insertItem(newItem);
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: TextField(controller: _controller,
+                decoration: InputDecoration(labelText: 'Type the item here',
+                    border: OutlineInputBorder()),)
+              ),
+              Expanded(child: TextField(controller: _quantity,
+                decoration: InputDecoration(labelText: 'Type the quantity here',
+                    border: OutlineInputBorder()),)
+              ),
+              ElevatedButton(child: Text("Click here"), onPressed: ()async {
+                if (_controller.text.isNotEmpty && _quantity.text.isNotEmpty){
+                  final newItem = Item(
+                      Item.ID++, _controller.text, int.parse(_quantity.value.text)
+                  );
+                  await dao.insertItem(newItem);
 
-    setState(() {
-    item.add(newItem);
-    });
-    }})
-        ]),
+                  setState(() {
+                    item.add(newItem);
+                  });
+                }})
+            ]),
         Expanded(child: Builder(builder: (context) {
           if (item.isEmpty) {
             return const Text("There are no items in the list");
@@ -140,45 +198,44 @@ class _MyHomePageState extends State<MyHomePage> {
           else {
             return ListView.builder(itemCount: item.length,
                 itemBuilder: (context, rowNum) {
-                  return
-                    GestureDetector(
-                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("${rowNum + 1}."), Text(item[rowNum].name),
-                              Text(" quantity:  ${item[rowNum].count}")
-                            ]), onLongPress: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                                title: const Text(
-                                    "Do you want to Delete the Item?"),
-                                actions: [
-                                  TextButton(onPressed: () =>
-                                      Navigator
-                                          .of(context)
-                                          .pop(),
-                                      child: const Text("No")),
-                                  TextButton(onPressed: () async {
-                                    final items = item[rowNum];
-                                    dao.deleteItem(items);
-                                    setState(() {
-                                      item.removeAt(rowNum);
-                                    });
-                                    Navigator.of(context).pop();
+              return GestureDetector(
+                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("${rowNum + 1}."), Text(item[rowNum].name),
+                        Text(" quantity:  ${item[rowNum].count}")
+                      ]),
+                  onTap: (){
+                    setState(() {  selectedItem = item[rowNum]; });
+                    },
+                  onLongPress: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                              title: const Text(
+                                  "Do you want to Delete the Item?"),
+                              actions: [
+                                TextButton(onPressed: () =>
+                                    Navigator.of(context).pop(),
+                                    child: const Text("No")),
+                                TextButton(onPressed: () async {
+                                  final items = item[rowNum];
+                                  dao.deleteItem(items);
+                                  setState(() {
+                                    item.removeAt(rowNum);
+                                  });
+                                  Navigator.of(context).pop();
                                   }, child: const Text("Yes"))
-                                ]
-                            );
-                          }
-
-                      );
-                    }
-                    );
-                }
+                              ]
+                          );
+                        }
+                        );
+                  }
+                  );
+            }
             );
           }
-        }),
-        ),
+        }),),
       ],
     );
   }

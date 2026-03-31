@@ -72,7 +72,7 @@ class _$AppDatabase extends AppDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  ShoppingListDao? _shoppingListDaoInstance;
+  ShoppingListDao? _shoppinglistDaoInstance;
 
   Future<sqflite.Database> open(
     String path,
@@ -106,7 +106,7 @@ class _$AppDatabase extends AppDatabase {
 
   @override
   ShoppingListDao get shoppinglistDao {
-    return _shoppingListDaoInstance ??=
+    return _shoppinglistDaoInstance ??=
         _$ShoppingListDao(database, changeListener);
   }
 }
