@@ -1,7 +1,5 @@
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:my_cst2335_labs/Database.dart';
-import 'package:my_cst2335_labs/Dao/ShoppingListDao.dart';
 import 'package:my_cst2335_labs/Item.dart';
 
 void main() {
